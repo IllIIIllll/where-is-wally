@@ -3,23 +3,27 @@
 # MIT License
 
 import os
+import glob
 
 from bs4 import BeautifulSoup
 from PIL import Image
 from tensorflow.keras.preprocessing import image
 import numpy as np
+import imageio
 
 XML_PATH = 'imgs/bnd_box/'
+IMG_PATH = 'imgs/original_imgs/'
+TRG_PATH = 'imgs/target_imgs/'
 
 def get_img_num(img_file):
     return os.path.basename(img_file).split('.')[0]
 
 def grab_xml_file(img_file):
-    num = get_img_num(img_file)
-    return XML_PATH + num + '.xml'
+    i = get_img_num(img_file)
+    return XML_PATH + i + '.xml'
 
 def decode_bndbox(xml):
-    soup = BeautifulSoup(xml, 'xml')
+    soup = BeautifulSoup(xml, 'html.parser')
     boxes = []
     for box in soup.annotation.find_all('bndbox'):
         boxes.append((
@@ -39,3 +43,15 @@ def make_target(img_file, boxes):
         xmin, xmax, ymin, ymax = box
         target[ymin:ymax, xmin:xmax, :] = 1
     return target
+
+if __name__ == '__main__':
+    img_files = glob.glob(IMG_PATH + '*.jpg')
+    if not os.path.exists(TRG_PATH):
+        os.mkdir(TRG_PATH)
+    for img in img_files:
+        xml_file = grab_xml_file(img)
+        i = get_img_num(xml_file)
+        raw_xml = open(xml_file, 'r')
+        boxes = decode_bndbox(raw_xml)
+        target = make_target(img, boxes)
+        imageio.imwrite(TRG_PATH + i + '.png', target)
