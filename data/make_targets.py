@@ -20,7 +20,7 @@ def get_img_num(img_file):
 
 def grab_xml_file(img_file):
     i = get_img_num(img_file)
-    return XML_PATH + i + '.xml'
+    return f'{XML_PATH}{i}.xml'
 
 def decode_bndbox(xml):
     soup = BeautifulSoup(xml, 'html.parser')
@@ -45,7 +45,7 @@ def make_target(img_file, boxes):
     return target
 
 if __name__ == '__main__':
-    img_files = glob.glob(IMG_PATH + '*.jpg')
+    img_files = glob.glob(f'{IMG_PATH}*.jpg')
     if not os.path.exists(TRG_PATH):
         os.mkdir(TRG_PATH)
     for img in img_files:
@@ -54,4 +54,4 @@ if __name__ == '__main__':
         raw_xml = open(xml_file, 'r')
         boxes = decode_bndbox(raw_xml)
         target = make_target(img, boxes)
-        imageio.imwrite(TRG_PATH + i + '.png', target)
+        imageio.imwrite(f'{TRG_PATH}{i}.png', target)
