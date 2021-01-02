@@ -5,6 +5,9 @@
 import os
 
 from bs4 import BeautifulSoup
+from PIL import Image
+from tensorflow.keras.preprocessing import image
+import numpy as np
 
 XML_PATH = 'imgs/bnd_box/'
 
@@ -26,3 +29,13 @@ def decode_bndbox(xml):
             int(box.ymax.contents[0])
         ))
     return boxes
+
+def make_target(img_file, boxes):
+    img = Image.open(img_file)
+    img_array = image.img_to_array(img, data_format='channels_last')
+    shape = img_array.shape
+    target = np.zeros(shape)
+    for box in boxes:
+        xmin, xmax, ymin, ymax = box
+        target[ymin:ymax, xmin:xmax, :] = 1
+    return target
