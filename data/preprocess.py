@@ -2,8 +2,19 @@
 # <llllllllll@kakao.com>
 # MIT License
 
+import os
+import glob
+
 import numpy as np
 from PIL import Image
+
+TRG_PATH = 'imgs/target_imgs/'
+IMG_PATH = 'imgs/original_imgs/'
+mu = 0.57417726724528806
+std = 0.31263486676782137
+
+def get_img_num(img_file):
+    return os.path.basename(img_file).split('.')[0]
 
 def load_image(img, size=None):
     if size:
@@ -13,3 +24,20 @@ def load_image(img, size=None):
 
 def load_label(img, size=None):
     return np.array(Image.open(img).convert('L').resize(size, Image.NEAREST))
+
+if __name__ == '__main__':
+    trg_files = sorted(glob.glob(f'{TRG_PATH}.png'), key=get_img_num)
+    img_files = sorted(glob.glob(f'{IMG_PATH}.jpg'), key=get_img_num)
+
+    size = (2800, 1760)
+
+    imgs = np.stack([load_image(img_file, size) for img_file in img_files])
+    trgs = np.stack([load_image(trg_file, size) for trg_file in trg_files])
+
+    imgs = imgs / 255.
+    trgs = trgs / 255
+    imgs -= mu
+    imgs /= std
+
+    np.save('imgs.npy', imgs)
+    np.save('trgs.npy', trgs)
