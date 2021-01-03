@@ -8,10 +8,7 @@ import glob
 import numpy as np
 from PIL import Image
 
-TRG_PATH = 'imgs/target_imgs/'
-IMG_PATH = 'imgs/original_imgs/'
-mu = 0.57417726724528806
-std = 0.31263486676782137
+from utils.params import *
 
 def get_img_num(img_file):
     return os.path.basename(img_file).split('.')[0]

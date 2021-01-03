@@ -11,9 +11,7 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 import imageio
 
-XML_PATH = 'imgs/bnd_box/'
-IMG_PATH = 'imgs/original_imgs/'
-TRG_PATH = 'imgs/target_imgs/'
+from utils.params import *
 
 def get_img_num(img_file):
     return os.path.basename(img_file).split('.')[0]
