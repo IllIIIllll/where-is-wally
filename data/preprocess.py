@@ -23,8 +23,8 @@ def load_label(img, size=None):
     return np.array(Image.open(img).convert('L').resize(size, Image.NEAREST))
 
 if __name__ == '__main__':
-    trg_files = sorted(glob.glob(f'{TRG_PATH}.png'), key=get_img_num)
-    img_files = sorted(glob.glob(f'{IMG_PATH}.jpg'), key=get_img_num)
+    trg_files = sorted(glob.glob(f'{TRG_PATH}*.png'), key=get_img_num)
+    img_files = sorted(glob.glob(f'{IMG_PATH}*.jpg'), key=get_img_num)
 
     size = (2800, 1760)
 
