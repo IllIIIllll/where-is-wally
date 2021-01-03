@@ -19,7 +19,7 @@ def load_image(img, size=None):
     else:
         return np.array(Image.open(img))
 
-def load_label(img, size=None):
+def load_target(img, size=None):
     return np.array(Image.open(img).convert('L').resize(size, Image.NEAREST))
 
 if __name__ == '__main__':
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     size = (2800, 1760)
 
     imgs = np.stack([load_image(img_file, size) for img_file in img_files])
-    trgs = np.stack([load_image(trg_file, size) for trg_file in trg_files])
+    trgs = np.stack([load_target(trg_file, size) for trg_file in trg_files])
 
     imgs = imgs / 255.
     trgs = trgs / 255
