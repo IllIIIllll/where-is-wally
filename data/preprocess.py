@@ -10,3 +10,6 @@ def load_image(img, size=None):
         return np.array(Image.open(img).resize(size, Image.NEAREST))
     else:
         return np.array(Image.open(img))
+
+def load_label(img, size=None):
+    return np.array(Image.open(img).convert('L').resize(size, Image.NEAREST))
