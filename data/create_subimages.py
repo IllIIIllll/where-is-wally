@@ -15,8 +15,20 @@ def extract_224_sub_image(img, box):
 def find_box(trg):
     h = np.max(np.unique(trg.sum(axis=1)))
     hstart = np.argmax(trg.sum(axis=0))
-    hend = int(hstart+h)
+    hend = int(hstart + h)
     w = np.max(np.unique(trg.sum(axis=0)))
     wstart = np.argmax(trg.sum(axis=1))
-    wend = int(wstart+w)
+    wend = int(wstart + w)
     return (wstart, wend, hstart, hend)
+
+if __name__ == '__main__':
+    imgs = np.load('imgs.npy')
+    trgs = np.load('trgs.npy')
+    wally_sub_imgs = []
+    wally_sub_trgs = []
+    for img, trg in zip(imgs, trgs):
+        box = find_box(trg)
+        wally_sub_imgs.append(extract_224_sub_image(img, box))
+        wally_sub_trgs.append(extract_224_sub_image(trg, box))
+    np.save('wally_sub_imgs.npy', np.array(wally_sub_imgs))
+    np.save('wally_sub_trgs.npy', np.array(wally_sub_trgs))
