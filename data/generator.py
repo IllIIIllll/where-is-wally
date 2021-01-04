@@ -31,8 +31,8 @@ class BatchIndices(object):
             return res
 
 class segm_generator(object):
-    def __init__(self, x, y, bs=64, out_sz=(224,224), train=True, wally=True):
-        self.x, self.y, self.bs, self.train = x,y,bs,train
+    def __init__(self, x, y, bs=64, out_sz=(224, 224), train=True, wally=True):
+        self.x, self.y, self.bs, self.train = x, y, bs, train
         self.wally = wally
         self.n = x.shape[0]
         self.ri, self.ci = [], []
@@ -41,9 +41,9 @@ class segm_generator(object):
             self.ri.append(ri), self.ci.append(ci)
         self.idx_gen = BatchIndices(self.n, bs, train)
         self.ro, self.co = out_sz
-        self.ych = self.y.shape[-1] if len(y.shape)==4 else 1
+        self.ych = self.y.shape[-1] if len(y.shape) == 4 else 1
 
-    def get_slice(self, i,o):
+    def get_slice(self, i, o):
         start = random.randint(0, i-o) if self.train else (i-o)
         return slice(start, start+o)
 
@@ -52,10 +52,10 @@ class segm_generator(object):
         slice_c = self.get_slice(self.ci[idx], self.co)
         x = self.x[idx][slice_r, slice_c]
         y = self.y[idx][slice_r, slice_c]
-        if self.train and (random.random()>0.5):
-            y = y[:,::-1]
-            x = x[:,::-1]
-        if not self.wally and np.sum(y)!=0:
+        if self.train and (random.random() > 0.5):
+            y = y[:, ::-1]
+            x = x[:, ::-1]
+        if not self.wally and np.sum(y) != 0:
             return None
         return x, to_categorical(y, num_classes=2)
 
@@ -68,5 +68,18 @@ class segm_generator(object):
                 items.append(item)
         if not items:
             return None
-        xs,ys = zip(*tuple(items))
+        xs, ys = zip(*tuple(items))
         return np.stack(xs), np.stack(ys)
+
+def seg_gen_mix(x1, y1, x2, y2, tot_bs=4, prop=0.75, out_sz=(224, 224), train=True):
+    n1 = int(tot_bs * prop)
+    n2 = tot_bs - n1
+    sg1 = segm_generator(x1, y1, n1, out_sz=out_sz ,train=train)
+    sg2 = segm_generator(x2, y2, n2, out_sz=out_sz ,train=train, wally=False)
+    while True:
+        out1 = sg1.__next__()
+        out2 = sg2.__next__()
+        if out2 is None:
+            yield out1
+        else:
+            yield np.concatenate((out1[0], out2[0])), np.concatenate((out1[1], out2[1]))
