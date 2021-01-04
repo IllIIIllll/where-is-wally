@@ -1,17 +1,15 @@
 # https://github.com/fastai/courses/blob/master/deeplearning2/tiramisu-keras.ipynb
 # Apache License 2.0
 
-from tensorflow.keras.layers import (Activation, Dropout, BatchNormalization, concatenate,
-                                     Conv2D, Conv2DTranspose, Reshape)
+from tensorflow.keras.layers import (Activation, Dropout, BatchNormalization,
+                                     concatenate, Conv2D, Conv2DTranspose, Reshape)
 from tensorflow.keras.regularizers import l2
 
 def relu(x): return Activation('relu')(x)
 def dropout(x, p): return Dropout(p)(x) if p else x
-def bn(x): return BatchNormalization(mode=2, axis=-1)(x)
-def relu_bn(x): return relu(bn(x))
+def relu_bn(x): return relu(BatchNormalization()(x))
 
 def conv(x, nf, sz, wd, p, stride=1):
-    Conv2D()
     x = Conv2D(
         nf,
         kernel_size=sz,
