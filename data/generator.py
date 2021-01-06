@@ -52,6 +52,7 @@ class segm_generator(object):
         slice_c = self.get_slice(self.ci[idx], self.co)
         x = self.x[idx][slice_r, slice_c]
         y = self.y[idx][slice_r, slice_c]
+        y = np.fliplr(np.reshape(y, (self.ro * self.co, -1)))
         if self.train and (random.random() > 0.5):
             y = y[:, ::-1]
             x = x[:, ::-1]
