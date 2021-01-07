@@ -36,5 +36,5 @@ if __name__ == '__main__':
     imgs -= mu
     imgs /= std
 
-    np.save('imgs.npy', imgs)
-    np.save('trgs.npy', trgs)
+    np.save('imgs/imgs.npy', imgs)
+    np.save('imgs/trgs.npy', trgs)
