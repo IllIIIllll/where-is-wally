@@ -1,0 +1,9 @@
+<annotation>
+	<filename>17.jpg</filename>
+	<bndbox>
+		<xmin>1259</xmin>
+		<ymin>75</ymin>
+		<xmax>1290</xmax>
+		<ymax>111</ymax>
+	</bndbox>
+</annotation>
