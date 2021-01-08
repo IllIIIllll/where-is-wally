@@ -20,4 +20,14 @@ def img_resize(img):
         return img
     else:
         return (np.array(Image.fromarray(img).resize((new_h, new_w))) \
-                / 255. - mu) /std
+                / 255. - mu) / std
+
+def split_panels(img):
+    h, w, _ = img.shape
+    num_vert_panels = int(h / 224)
+    num_hor_panels = int(w / 224)
+    panels = []
+    for i in range(num_vert_panels):
+        for j in range(num_hor_panels):
+            panels.append(img[i*224:(i+1)*224,j*224:(j+1)*224])
+    return np.stack(panels)
