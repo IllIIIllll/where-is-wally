@@ -7,3 +7,4 @@ TRG_PATH = 'imgs/target_imgs/'
 IMG_PATH = 'imgs/original_imgs/'
 mu = 0.57417726724528806
 std = 0.31263486676782137
+INPUT_SHAPE = (224, 224, 3)
