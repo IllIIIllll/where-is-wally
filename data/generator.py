@@ -72,10 +72,13 @@ class segm_generator(object):
         xs, ys = zip(*tuple(items))
         return np.stack(xs), np.stack(ys)
 
-def gen_sample_weight(shape, freq, n1, wally=True):
+def gen_sample_weight(shape, n1, n2, freq, wally=True):
     sample_weight = np.ones(shape)
     if wally:
-        sample_weight[:n1] = 1 / freq
+        if n1 > n2:
+            sample_weight[:n1] = 1 / freq
+        else:
+            sample_weight[n1:] = 1 / freq
     return sample_weight
 
 def seg_gen_mix(x1, y1, x2, y2, tot_bs=4, prop=0.75, out_sz=(224, 224), train=True):
@@ -89,10 +92,10 @@ def seg_gen_mix(x1, y1, x2, y2, tot_bs=4, prop=0.75, out_sz=(224, 224), train=Tr
         out1 = sg1.__next__()
         out2 = sg2.__next__()
         if out2 is None:
-            yield out1 + (gen_sample_weight(out1[1].shape[0], freq, n1, wally=False), )
+            yield out1 + (gen_sample_weight(out1[1].shape[0], n1, n2, freq, wally=False), )
         else:
             yield (
                 np.concatenate((out1[0], out2[0])),
                 np.concatenate((out1[1], out2[1])),
-                gen_sample_weight(np.concatenate((out1[1], out2[1])).shape[0], freq, n1)
+                gen_sample_weight(np.concatenate((out1[1], out2[1])).shape[0], n1, n2, freq)
             )
