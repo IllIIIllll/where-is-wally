@@ -115,7 +115,7 @@ def main():
         full_img = load_image(img, args.size)
         full_img_r, full_pred = wally_predict(model, full_img)
         mask = prediction_mask(full_img_r, full_pred)
-        mask.save(os.path.join(args.output, str(i) + '.png'))
+        mask.save(os.path.join(args.output, str(i+1) + '.png'))
 
 if __name__ == '__main__':
     main()
