@@ -4,7 +4,7 @@
 
 import argparse
 from datetime import datetime
-from os.path import join
+import os
 
 from utils.params import *
 from utils.tiramisu import *
@@ -30,7 +30,7 @@ def img_resize(img):
     if new_h == h and new_w == w:
         return img
     else:
-        return (np.array(Image.fromarray(img).resize((new_h, new_w))) \
+        return (np.array(Image.fromarray(img).resize((new_w, new_h))) \
                 / 255. - mu) / std
 
 def split_panels(img):
