@@ -53,3 +53,16 @@ def combine_panels(img, panels):
     return np.concatenate(total, axis=0)
 
 def reshape_pred(pred): return pred.reshape(224, 224, 2)[:,:,1]
+
+def prediction_mask(img, target):
+    layer1 = Image.fromarray(((img * std + mu) * 255).astype('uint8'))
+    layer2 = Image.fromarray(
+        np.concatenate(
+            4 * [np.expand_dims(
+                (225 * (1 - target)).astype('uint8'), axis=-1
+            )], axis=-1
+        )
+    )
+    result = Image.new('RGBA', layer1.size)
+    result = Image.alpha_composite(result, layer1.convert('RGBA'))
+    return Image.alpha_composite(result, layer2)
