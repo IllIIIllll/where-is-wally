@@ -13,9 +13,9 @@ def img_resize(img):
     nhpanels = w / 224
     new_h, new_w = h, w
     if nvpanels * 224 != h:
-        new_h = (nvpanels + 1) * 224
+        new_h = int((nvpanels + 1) * 224)
     if nhpanels * 224 != w:
-        new_w = (nhpanels + 1) * 224
+        new_w = int((nhpanels + 1) * 224)
     if new_h == h and new_w == w:
         return img
     else:
@@ -29,19 +29,5 @@ def split_panels(img):
     panels = []
     for i in range(num_vert_panels):
         for j in range(num_hor_panels):
-            panels.append(img[i*224:(i+1)*224,j*224:(j+1)*224])
+            panels.append(img[i*224:(i+1)*224, j*224:(j+1)*224])
     return np.stack(panels)
-
-def combine_panels(img, panels):
-    h, w, _ = img.shape
-    num_vert_panels = int(h / 224)
-    num_hor_panels = int(w / 224)
-    total = []
-    p = 0
-    for i in range(num_vert_panels):
-        row = []
-        for j in range(num_hor_panels):
-            row.append(panels[p])
-            p += 1
-        total.append(np.concatenate(row, axis=1))
-    return np.concatenate(total, axis=0)
