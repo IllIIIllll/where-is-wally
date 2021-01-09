@@ -78,3 +78,44 @@ def wally_predict(model, img):
     pred_panels = model.predict(panels, batch_size=6)
     pred_panels = np.stack([reshape_pred(pred) for pred in pred_panels])
     return rimg, combine_panels(rimg, pred_panels)
+
+def main():
+    now = datetime.now()
+    today = now.strftime('%Y-%m-%d__%H-%M-%S')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('imgs', nargs='*', default=[])
+    parser.add_argument('--model', default='models/model_2000epochs.h5')
+    parser.add_argument('--output', default=f'data/imgs/predictions/{today}/')
+    parser.add_argument('--size', type=tuple, default=(2800, 1760), help='resolution to load image')
+
+    args = parser.parse_args()
+
+    img_input = Input(shape=INPUT_SHAPE)
+    x = create_tiramisu(
+        2, img_input,
+        nb_layers_per_block=[4, 5, 7, 10, 12, 15],
+        p=0.2, wd=1e-4
+    )
+    model = Model(img_input, x)
+
+    model.compile(
+        loss=categorical_crossentropy,
+        optimizer=RMSprop(1e-3),
+        metrics=['accuracy'],
+        sample_weight_mode='temporal'
+    )
+
+    model.load_weights(args.model)
+
+    if not os.path.exists(args.output):
+        os.makedirs(args.output)
+
+    for i, img in enumerate(args.imgs):
+        full_img = load_image(img, args.size)
+        full_img_r, full_pred = wally_predict(model, full_img)
+        mask = prediction_mask(full_img_r, full_pred)
+        mask.save(os.path.join(args.output, str(i) + '.png'))
+
+if __name__ == '__main__':
+    main()
