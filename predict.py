@@ -31,3 +31,17 @@ def split_panels(img):
         for j in range(num_hor_panels):
             panels.append(img[i*224:(i+1)*224,j*224:(j+1)*224])
     return np.stack(panels)
+
+def combine_panels(img, panels):
+    h, w, _ = img.shape
+    num_vert_panels = int(h / 224)
+    num_hor_panels = int(w / 224)
+    total = []
+    p = 0
+    for i in range(num_vert_panels):
+        row = []
+        for j in range(num_hor_panels):
+            row.append(panels[p])
+            p += 1
+        total.append(np.concatenate(row, axis=1))
+    return np.concatenate(total, axis=0)
