@@ -2,8 +2,13 @@
 # <llllllllll@kakao.com>
 # MIT License
 
+import argparse
+from datetime import datetime
+from os.path import join
+
 from utils.params import *
 from utils.tiramisu import *
+from data.preprocess import load_image
 
 import numpy as np
 from PIL import Image
@@ -15,13 +20,13 @@ from tensorflow.keras.losses import categorical_crossentropy
 
 def img_resize(img):
     h, w, _ = img.shape
-    nvpanels = h / 224
-    nhpanels = w / 224
+    nvpanels = h // 224
+    nhpanels = w // 224
     new_h, new_w = h, w
     if nvpanels * 224 != h:
-        new_h = int((nvpanels + 1) * 224)
+        new_h = (nvpanels + 1) * 224
     if nhpanels * 224 != w:
-        new_w = int((nhpanels + 1) * 224)
+        new_w = (nhpanels + 1) * 224
     if new_h == h and new_w == w:
         return img
     else:
@@ -30,8 +35,8 @@ def img_resize(img):
 
 def split_panels(img):
     h, w, _ = img.shape
-    num_vert_panels = int(h / 224)
-    num_hor_panels = int(w / 224)
+    num_vert_panels = h // 224
+    num_hor_panels = w // 224
     panels = []
     for i in range(num_vert_panels):
         for j in range(num_hor_panels):
@@ -40,8 +45,8 @@ def split_panels(img):
 
 def combine_panels(img, panels):
     h, w, _ = img.shape
-    num_vert_panels = int(h / 224)
-    num_hor_panels = int(w / 224)
+    num_vert_panels = h // 224
+    num_hor_panels = w // 224
     total = []
     p = 0
     for i in range(num_vert_panels):
