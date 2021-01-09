@@ -52,7 +52,7 @@ def combine_panels(img, panels):
         total.append(np.concatenate(row, axis=1))
     return np.concatenate(total, axis=0)
 
-def reshape_pred(pred): return pred.reshape(224, 224, 2)[:,:,1]
+def reshape_pred(pred): return pred.reshape(224, 224, 2)[:, :, 1]
 
 def prediction_mask(img, target):
     layer1 = Image.fromarray(((img * std + mu) * 255).astype('uint8'))
@@ -66,3 +66,10 @@ def prediction_mask(img, target):
     result = Image.new('RGBA', layer1.size)
     result = Image.alpha_composite(result, layer1.convert('RGBA'))
     return Image.alpha_composite(result, layer2)
+
+def wally_predict(model, img):
+    rimg = img_resize(img)
+    panels = split_panels(rimg)
+    pred_panels = model.predict(panels, batch_size=6)
+    pred_panels = np.stack([reshape_pred(pred) for pred in pred_panels])
+    return rimg, combine_panels(rimg, pred_panels)
